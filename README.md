@@ -65,3 +65,31 @@ while ($len > 0) {
 ```
 
 This is longer to write, but at least I am very sure about what I'm doing.
+
+## Default Parameter Values
+
+### `fgetcsv($handle[, $length = 0[, $delimeter = ','[, $enclosure = '"'[, $escape = '\\']]]])`
+
+Most commonly used CSV format is using `"` as both enclosure character and escape character.
+
+Which means values with comma or double quote inside is enclosed with a pair of double quotes, and double quotes are escaped with an extra double quote.
+
+#### What's the problem?
+
+The default parameter value of `$escape` in `fgetcsv` is backslash character.
+
+```php
+while ($row = fgetcsv($handle)) {
+    // $row may contains wrong values for some edge cases
+}
+```
+
+In order to adapt to common CSV format, we must specify the parameter value every time.
+
+```php
+while ($row = fgetcsv($handle, 0, ',', '"', '"')) {
+    // $row must be correct now
+}
+```
+
+Bugs caused by this function might not be obvious to spot, who would expect PHP's "defaults" and the common defaults are not aligned?
